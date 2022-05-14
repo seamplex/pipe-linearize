@@ -1,0 +1,51 @@
+# stress linearization in an infinite pipe
+# of internal radius a, external radius b and internal pressure p
+# by numerically integrating the Lamé's analytical solutions
+
+# problem definition (in a separate file shared by the FEM solution)
+INCLUDE problem.fee
+
+# principal stresses along the radial coordinate (may be y or z)
+sigma1(r) = sigmatheta(0,0,r)
+sigma2(r) = sigmal(0,0,r)
+sigma3(r) = sigmar(0,0,r)
+
+# computation of main membrane stresses
+M1 = 1/(b-a)*integral(sigma1(r), r, a, b)
+M2 = 1/(b-a)*integral(sigma2(r), r, a, b)
+M3 = 1/(b-a)*integral(sigma3(r), r, a, b)
+
+# von mises and tresca membrane stresses
+Mt = max(abs(M1-M2), abs(M2-M3), abs(M3-M1))
+Mv = sqrt(((M1-M2)^2 + (M2-M3)^2 + (M3-M1)^2)/2)
+
+# computation of membrane plus bending stresses
+MB1 = M1 + 6/(b-a)^2*integral(sigma1(r)*((a+b)/2-r), r, a, b)
+MB2 = M2 + 6/(b-a)^2*integral(sigma2(r)*((a+b)/2-r), r, a, b)
+MB3 = M3 + 6/(b-a)^2*integral(sigma3(r)*((a+b)/2-r), r, a, b)
+
+# von mises and tresca
+MBv = sqrt(((MB1-MB2)^2 + (MB2-MB3)^2 + (MB3-MB1)^2)/2)
+MBt = max(abs(MB1-MB2), abs(MB2-MB3), abs(MB3-MB1))
+
+# print results
+PRINT "\# numerical integration of analytical solutions"
+PRINT {
+   %g 0 0                 # number of elements through thickness and order
+ %.3f Mv Mt  MBv MBt      # linearized stresses (von Mises and Tresca)
+   %g 0
+      0
+ %.2f 0                   # wall time in seconds
+ %.3f 0                   # in Gb
+}
+
+INCLUDE analytical.ppl
+PRINT "\# difference with pure analytical"
+PRINT {
+   %g 0 0
+ %.1g Mv-M_vonmises Mt-M_tresca  MBv-MB_vonmises MBt-MB_tresca
+   %g 0
+      0
+ %.2f 0
+ %.3f 0
+}

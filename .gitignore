@@ -1,0 +1,13 @@
+analytical.ppl
+analytical.txt
+*.msh
+*.png
+*.pdf
+*.svg
+*.txt
+*.dat
+*.vtk
+problem.ppl
+problem.max 
+pipe-*.geo
+cpu-topo.svg

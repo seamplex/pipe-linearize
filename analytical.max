@@ -1,0 +1,32 @@
+/* analytically (and symbolically) solve for the linearized stresses in an infinite pipe */
+assume(a > 0, b > 0, b > a);
+
+sigmal(r)     := 2*nu*p*a^2/(b^2-a^2);
+sigmar(r)     := p*a^2/(b^2-a^2) * (1 - b^2/r^2);
+sigmatheta(r) := p*a^2/(b^2-a^2) * (1 + b^2/r^2);
+
+sigma1(r) := sigmatheta(r);
+sigma2(r) := sigmal(r);
+sigma3(r) := sigmar(r);
+
+M_1 : 1/(b-a)*integrate(sigma1(r), r, a, b);
+M_2 : 1/(b-a)*integrate(sigma2(r), r, a, b);
+M_3 : 1/(b-a)*integrate(sigma3(r), r, a, b);
+
+M_tresca : max(abs(M_1-M_2), abs(M_2-M_3), abs(M_3-M_1))$
+M_vonmises : sqrt(((M_1-M_2)^2 + (M_2-M_3)^2 + (M_3-M_1)^2)/2)$
+
+MB_1 : M_1 + 6/(b-a)^2*integrate(sigma1(r)*((a+b)/2-r), r, a, b);
+MB_2 : M_2 + 6/(b-a)^2*integrate(sigma2(r)*((a+b)/2-r), r, a, b);
+MB_3 : M_3 + 6/(b-a)^2*integrate(sigma3(r)*((a+b)/2-r), r, a, b);
+
+MB_tresca : max(abs(MB_1-MB_2), abs(MB_2-MB_3), abs(MB_3-MB_1))$
+MB_vonmises : sqrt(((MB_1-MB_2)^2 + (MB_2-MB_3)^2 + (MB_3-MB_1)^2)/2)$
+
+/* read the problem's parameters to compute the numerical values */
+batch("problem.max");
+
+float(ev(M_tresca));
+float(ev(M_vonmises));
+float(ev(MB_tresca));
+float(ev(MB_vonmises));
