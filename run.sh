@@ -49,7 +49,7 @@ for shape in ust10 uct10 sst10 sct10 ssh20 sch20 ssh27 sch27; do
    if [ ! -e pipe-${shape}-${order}-${n}.msh ]; then
     gmsh -v 0 -3 pipe-${shape}-${order}-${n}.geo
    fi
-   feenox pipe.fee --mumps ${shape} ${order} ${n} | tee -a convergence-${shape}-${order}.dat
+   feenox pipe.fee ${shape} ${order} ${n} | tee -a convergence-${shape}-${order}.dat
   
    # create a geo to draw a picture of the mesh
    # showing how many elements are there with Gmsh

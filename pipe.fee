@@ -1,10 +1,11 @@
 # convergence study of linearized stresses in an infinite pipe
 # with respect to the number of elements in the pipe thickness
-PROBLEM mechanical 3D
+PROBLEM mechanical 3D PC gamg KSP cg
+PETSC_OPTIONS -mg_levels_pc_type sor
 
 t0 = wall_time()     # initial wall time
 
-# read mesh aaccording to shape $1, order $2 and number of elements through thickness $2
+# read mesh according to shape $1, order $2 and number of elements through thickness $2
 READ_MESH pipe-$1-$2-$3.msh 
 
 INCLUDE problem.fee  # read problem parameters
